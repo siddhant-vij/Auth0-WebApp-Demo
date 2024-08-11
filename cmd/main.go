@@ -1,18 +1,22 @@
 package main
 
 import (
-	"fmt"
+	"log"
+	"net/http"
 
-	"github.com/siddhant-vij/Auth0-WebApp-Demo/config"
+	"github.com/siddhant-vij/Auth0-WebApp-Demo/middlewares"
+	"github.com/siddhant-vij/Auth0-WebApp-Demo/router"
 )
 
-var cfg *config.Config = &config.Config{}
-
-func init() {
-	config.LoadEnv(cfg)
-}
-
 func main() {
-	fmt.Println("Checking if config properly loaded")
-	fmt.Println(cfg)
+	log.Println("Checking if HelloWorld server is running...")
+	mux := http.NewServeMux()
+	corsMux := middlewares.CorsMiddleware(mux)
+	router.RegisterRoutes(mux)
+
+	log.Println("Starting server on port 3000...")
+	err := http.ListenAndServe(":3000", corsMux)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
