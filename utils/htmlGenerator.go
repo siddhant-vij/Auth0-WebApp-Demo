@@ -6,11 +6,6 @@ import (
 )
 
 func GenerateHtml(tpl *template.Template, fileName string, content interface{}) error {
-	err := CopyFiles("static", "public")
-	if err != nil {
-		return err
-	}
-
 	file, err := os.Create("public/" + fileName + ".html")
 	if err != nil {
 		return err
