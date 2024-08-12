@@ -5,4 +5,9 @@ type Config struct {
 	Domain       string
 	ClientSecret string
 	CallbackURL  string
+
+	UserProfile struct {
+		Nickname string
+		Picture  string
+	}
 }
