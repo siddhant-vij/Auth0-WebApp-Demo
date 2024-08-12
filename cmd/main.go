@@ -9,14 +9,9 @@ import (
 )
 
 func main() {
-	log.Println("Checking if HelloWorld server is running...")
 	mux := http.NewServeMux()
 	corsMux := middlewares.CorsMiddleware(mux)
 	router.RegisterRoutes(mux)
 
-	log.Println("Starting server on port 3000...")
-	err := http.ListenAndServe(":3000", corsMux)
-	if err != nil {
-		log.Fatal(err)
-	}
+	log.Fatal(http.ListenAndServe("localhost:3000", corsMux))
 }
