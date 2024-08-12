@@ -1,8 +1,7 @@
 package router
 
 import (
-	"crypto/rand"
-	"math/big"
+	"html/template"
 	"net/http"
 
 	"github.com/siddhant-vij/Auth0-WebApp-Demo/config"
@@ -10,24 +9,19 @@ import (
 )
 
 var cfg *config.Config = &config.Config{}
+var tpl *template.Template
 
 func init() {
 	config.LoadEnv(cfg)
+	tpl = template.Must(template.ParseGlob("templates/*.gohtml"))
 }
 
-func RandomResponseGen(w http.ResponseWriter, r *http.Request) {
-	randomInt, err := rand.Int(rand.Reader, big.NewInt(2))
-	if err != nil {
-		panic(err)
-	}
+func ServeHome(w http.ResponseWriter, r *http.Request) {
+	utils.GenerateHtml(tpl, "home", nil)
 
-	if randomInt.Int64() == 0 {
-		utils.RespondWithError(w, 400, "Goodbye World!")
-	} else {
-		utils.RespondWithJSON(w, http.StatusOK, "Hello World!")
-	}
+	http.ServeFile(w, r, "public/home.html")
 }
 
 func RegisterRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("/", RandomResponseGen)
+	mux.HandleFunc("/", ServeHome)
 }
