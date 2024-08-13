@@ -11,28 +11,9 @@ import (
 	"github.com/siddhant-vij/Auth0-WebApp-Demo/handlers/logout"
 	"github.com/siddhant-vij/Auth0-WebApp-Demo/handlers/user"
 	"github.com/siddhant-vij/Auth0-WebApp-Demo/middlewares"
-	"github.com/siddhant-vij/Auth0-WebApp-Demo/utils"
 )
 
-var (
-	cfg  *config.Config             = &config.Config{}
-	auth *controllers.Authenticator = &controllers.Authenticator{}
-)
-
-func init() {
-	config.LoadEnv(cfg)
-	auth0, err := controllers.NewAuthenticator(cfg)
-	if err != nil {
-		panic(err)
-	}
-	auth = auth0
-	err = utils.CopyFiles("static", "public")
-	if err != nil {
-		panic(err)
-	}
-}
-
-func RegisterRoutes(mux *http.ServeMux) {
+func RegisterRoutes(mux *http.ServeMux, cfg *config.Config, auth *controllers.Authenticator) {
 	fileServer := http.FileServer(http.Dir("./public"))
 	mux.Handle("/public/", http.StripPrefix("/public", fileServer))
 
