@@ -8,9 +8,8 @@ import (
 	"github.com/siddhant-vij/Auth0-WebApp-Demo/utils"
 )
 
-func ServeUserPage(w http.ResponseWriter, r *http.Request) {
+func ServeUserPage(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 	tpl := template.Must(template.ParseFiles("templates/user.gohtml"))
-	user := r.Context().Value(config.Config{}).(config.Config).UserProfile
-	utils.GenerateHtml(tpl, "user", user)
+	utils.GenerateHtml(tpl, "user", cfg.UserProfile)
 	http.ServeFile(w, r, "public/user.html")
 }
