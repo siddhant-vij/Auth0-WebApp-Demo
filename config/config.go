@@ -16,7 +16,7 @@ type Config struct {
 	PkceCodeVerifier string
 
 	UserProfile struct {
-		Nickname string
+		Name string
 		Picture  string
 	}
 }

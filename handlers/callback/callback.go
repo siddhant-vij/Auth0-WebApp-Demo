@@ -50,7 +50,7 @@ func ServeCallbackPage(w http.ResponseWriter, r *http.Request, auth *controllers
 		return
 	}
 
-	cfg.UserProfile.Nickname = profile["nickname"].(string)
+	cfg.UserProfile.Name = profile["name"].(string)
 	cfg.UserProfile.Picture = profile["picture"].(string)
 
 	sessionId, err := generateSessionId()
@@ -63,7 +63,7 @@ func ServeCallbackPage(w http.ResponseWriter, r *http.Request, auth *controllers
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_id",
 		Value:    sessionId,
-		MaxAge:   36000, // same as Access Token lifetime (Auth0)
+		MaxAge:   36000, // same as ID Token lifetime (Auth0)
 		Secure:   false,
 		HttpOnly: true,
 	})

@@ -38,7 +38,7 @@ func HandleLogout(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 		Secure:   false,
 		HttpOnly: true,
 	})
-	cfg.UserProfile.Nickname = ""
+	cfg.UserProfile.Name = ""
 	cfg.UserProfile.Picture = ""
 
 	http.Redirect(w, r, logoutUrl.String(), http.StatusSeeOther)
