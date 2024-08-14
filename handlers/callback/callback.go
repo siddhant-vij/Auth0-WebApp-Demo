@@ -5,6 +5,8 @@ import (
 	"encoding/base64"
 	"net/http"
 
+	"golang.org/x/oauth2"
+
 	"github.com/siddhant-vij/Auth0-WebApp-Demo/config"
 	"github.com/siddhant-vij/Auth0-WebApp-Demo/controllers"
 	"github.com/siddhant-vij/Auth0-WebApp-Demo/utils"
@@ -26,7 +28,11 @@ func ServeCallbackPage(w http.ResponseWriter, r *http.Request, auth *controllers
 	}
 
 	// Exchange an authorization code for a token.
-	token, err := auth.Exchange(r.Context(), r.URL.Query().Get("code"))
+	token, err := auth.Exchange(
+		r.Context(),
+		r.URL.Query().Get("code"),
+		oauth2.VerifierOption(cfg.PkceCodeVerifier),
+	)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusUnauthorized, "Failed to convert an authorization code into a token.")
 		return

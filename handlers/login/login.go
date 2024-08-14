@@ -5,6 +5,8 @@ import (
 	"encoding/base64"
 	"net/http"
 
+	"golang.org/x/oauth2"
+
 	"github.com/siddhant-vij/Auth0-WebApp-Demo/config"
 	"github.com/siddhant-vij/Auth0-WebApp-Demo/controllers"
 	"github.com/siddhant-vij/Auth0-WebApp-Demo/utils"
@@ -26,5 +28,10 @@ func ServeLoginPage(w http.ResponseWriter, r *http.Request, auth *controllers.Au
 		return
 	}
 	cfg.SessionState = state
-	http.Redirect(w, r, auth.AuthCodeURL(state), http.StatusTemporaryRedirect)
+	http.Redirect(w, r,
+		auth.AuthCodeURL(
+			state,
+			oauth2.S256ChallengeOption(cfg.PkceCodeVerifier),
+		),
+		http.StatusTemporaryRedirect)
 }

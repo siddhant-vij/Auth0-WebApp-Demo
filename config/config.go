@@ -13,6 +13,8 @@ type Config struct {
 	SessionState    string
 	SessionTokenMap map[string]*oauth2.Token
 
+	PkceCodeVerifier string
+
 	UserProfile struct {
 		Nickname string
 		Picture  string

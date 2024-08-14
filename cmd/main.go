@@ -15,9 +15,10 @@ import (
 
 func main() {
 	cfg := &config.Config{}
-	auth := &controllers.Authenticator{}	
+	auth := &controllers.Authenticator{}
 	config.LoadEnv(cfg)
 	cfg.SessionTokenMap = make(map[string]*oauth2.Token)
+	cfg.PkceCodeVerifier = oauth2.GenerateVerifier()
 	auth, err := controllers.NewAuthenticator(cfg)
 	if err != nil {
 		panic(err)
