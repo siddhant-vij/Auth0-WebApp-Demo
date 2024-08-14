@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 
+	"golang.org/x/oauth2"
+
 	"github.com/siddhant-vij/Auth0-WebApp-Demo/config"
 	"github.com/siddhant-vij/Auth0-WebApp-Demo/controllers"
 	"github.com/siddhant-vij/Auth0-WebApp-Demo/middlewares"
@@ -11,28 +13,23 @@ import (
 	"github.com/siddhant-vij/Auth0-WebApp-Demo/utils"
 )
 
-var (
-	cfg  *config.Config             = &config.Config{}
-	auth *controllers.Authenticator = &controllers.Authenticator{}
-)
-
-func init() {
+func main() {
+	cfg := &config.Config{}
+	auth := &controllers.Authenticator{}	
 	config.LoadEnv(cfg)
-	auth0, err := controllers.NewAuthenticator(cfg)
+	cfg.SessionTokenMap = make(map[string]*oauth2.Token)
+	auth, err := controllers.NewAuthenticator(cfg)
 	if err != nil {
 		panic(err)
 	}
-	auth = auth0
 	err = utils.CopyFiles("static", "public")
 	if err != nil {
 		panic(err)
 	}
-}
 
-func main() {
 	mux := http.NewServeMux()
 	corsMux := middlewares.CorsMiddleware(mux)
 	router.RegisterRoutes(mux, cfg, auth)
 
-	log.Fatal(http.ListenAndServe("localhost:3000", corsMux))
+	log.Fatal(http.ListenAndServe(":3000", corsMux))
 }

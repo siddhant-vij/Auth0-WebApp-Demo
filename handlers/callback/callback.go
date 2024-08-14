@@ -1,6 +1,8 @@
 package callback
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"net/http"
 
 	"github.com/siddhant-vij/Auth0-WebApp-Demo/config"
@@ -8,13 +10,17 @@ import (
 	"github.com/siddhant-vij/Auth0-WebApp-Demo/utils"
 )
 
-func ServeCallbackPage(w http.ResponseWriter, r *http.Request, auth *controllers.Authenticator, cfg *config.Config) {
-	stateCookie, err := r.Cookie("state")
+func generateSessionId() (string, error) {
+	b := make([]byte, 32)
+	_, err := rand.Read(b)
 	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, "Couldn't find state cookie.")
-		return
+		return "", err
 	}
-	if r.URL.Query().Get("state") != stateCookie.Value {
+	return base64.StdEncoding.EncodeToString(b), nil
+}
+
+func ServeCallbackPage(w http.ResponseWriter, r *http.Request, auth *controllers.Authenticator, cfg *config.Config) {
+	if r.URL.Query().Get("state") != cfg.SessionState {
 		utils.RespondWithError(w, http.StatusBadRequest, "Invalid state parameter.")
 		return
 	}
@@ -41,10 +47,17 @@ func ServeCallbackPage(w http.ResponseWriter, r *http.Request, auth *controllers
 	cfg.UserProfile.Nickname = profile["nickname"].(string)
 	cfg.UserProfile.Picture = profile["picture"].(string)
 
+	sessionId, err := generateSessionId()
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	cfg.SessionTokenMap[sessionId] = token
+
 	http.SetCookie(w, &http.Cookie{
-		Name:     "access_token",
-		Value:    token.AccessToken,
-		MaxAge:   36000,
+		Name:     "session_id",
+		Value:    sessionId,
+		MaxAge:   36000, // same as Access Token lifetime (Auth0)
 		Secure:   false,
 		HttpOnly: true,
 	})

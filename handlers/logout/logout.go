@@ -32,21 +32,12 @@ func HandleLogout(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 	logoutUrl.RawQuery = params.Encode()
 
 	http.SetCookie(w, &http.Cookie{
-		Name:     "access_token",
+		Name:     "session_id",
 		Value:    "",
 		MaxAge:   0,
 		Secure:   false,
 		HttpOnly: true,
 	})
-
-	http.SetCookie(w, &http.Cookie{
-		Name:     "state",
-		Value:    "",
-		MaxAge:   0,
-		Secure:   false,
-		HttpOnly: true,
-	})
-
 	cfg.UserProfile.Nickname = ""
 	cfg.UserProfile.Picture = ""
 

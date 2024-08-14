@@ -20,7 +20,7 @@ func RegisterRoutes(mux *http.ServeMux, cfg *config.Config, auth *controllers.Au
 	mux.HandleFunc("/", home.ServeHomePage)
 
 	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
-		login.ServeLoginPage(w, r, auth)
+		login.ServeLoginPage(w, r, auth, cfg)
 	})
 
 	mux.HandleFunc("/callback", func(w http.ResponseWriter, r *http.Request) {
@@ -33,5 +33,5 @@ func RegisterRoutes(mux *http.ServeMux, cfg *config.Config, auth *controllers.Au
 
 	mux.Handle("/user", middlewares.IsAuthenticated(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		user.ServeUserPage(w, r, cfg)
-	}), cfg))
+	}), auth, cfg))
 }
